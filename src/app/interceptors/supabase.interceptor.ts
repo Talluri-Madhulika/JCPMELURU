@@ -172,14 +172,18 @@ export class SupabaseInterceptor implements HttpInterceptor {
     const mapped = { ...data };
     delete mapped._id;
     delete mapped.id;
-    if (data.youtubeLink !== undefined) mapped.youtube_link = data.youtubeLink;
-    if (data.audioLink !== undefined) mapped.audio_link = data.audioLink;
-    if (data.dateTime !== undefined) mapped.date_time = data.dateTime;
-    if (data.titleTelugu !== undefined) mapped.title_telugu = data.titleTelugu;
-    if (data.titleEnglish !== undefined) mapped.title_english = data.titleEnglish;
-    if (data.lyricsTelugu !== undefined) mapped.lyrics_telugu = data.lyricsTelugu;
-    if (data.lyricsEnglish !== undefined) mapped.lyrics_english = data.lyricsEnglish;
-    if (data.isActive !== undefined) mapped.is_active = data.isActive;
+    
+    // Sanitize empty strings for number fields to prevent PostgreSQL integer parsing errors
+    if (mapped.number === '') mapped.number = null;
+    
+    if (data.youtubeLink !== undefined) { mapped.youtube_link = data.youtubeLink; delete mapped.youtubeLink; }
+    if (data.audioLink !== undefined) { mapped.audio_link = data.audioLink; delete mapped.audioLink; }
+    if (data.dateTime !== undefined) { mapped.date_time = data.dateTime; delete mapped.dateTime; }
+    if (data.titleTelugu !== undefined) { mapped.title_telugu = data.titleTelugu; delete mapped.titleTelugu; }
+    if (data.titleEnglish !== undefined) { mapped.title_english = data.titleEnglish; delete mapped.titleEnglish; }
+    if (data.lyricsTelugu !== undefined) { mapped.lyrics_telugu = data.lyricsTelugu; delete mapped.lyricsTelugu; }
+    if (data.lyricsEnglish !== undefined) { mapped.lyrics_english = data.lyricsEnglish; delete mapped.lyricsEnglish; }
+    if (data.isActive !== undefined) { mapped.is_active = data.isActive; delete mapped.isActive; }
     return mapped;
   }
 }
