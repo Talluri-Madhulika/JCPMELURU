@@ -1,6 +1,6 @@
 import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -24,6 +24,7 @@ import { SocialComponent } from './pages/social/social.component';
 import { ContentDetailComponent } from './pages/content-detail/content-detail.component';
 import { SafeUrlPipe } from './pipes/safe-url.pipe';
 import { ProfileComponent } from './pages/profile/profile.component';
+import { SupabaseInterceptor } from './interceptors/supabase.interceptor';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,9 @@ import { ProfileComponent } from './pages/profile/profile.component';
     })
   ],
 
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: SupabaseInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
