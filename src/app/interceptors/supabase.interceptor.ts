@@ -33,7 +33,7 @@ export class SupabaseInterceptor implements HttpInterceptor {
         endpoint = 'users';
         id = parts[2];
         action = parts[3];
-      } else if (id === 'login' || id === 'signup') {
+      } else if (id === 'login' || id === 'signup' || id === 'forgot-password') {
         action = id;
         id = undefined;
       }
@@ -87,15 +87,20 @@ export class SupabaseInterceptor implements HttpInterceptor {
             email: body.email,
             password: body.password
          });
+         
          if (authError || !authData.user) {
-            // Fallback for mock logins if real auth fails (for local dev testing)
-            const { data, error } = await this.supabase.from('users').select('*').eq('email', body.email).single();
-            if (error || !data) throw new Error('Invalid email or password');
-            return { token: 'supabase-mock-token', user: this.mapData(data) };
+            throw new Error(authError?.message || 'Invalid email or password');
          }
          
          const { data, error } = await this.supabase.from('users').select('*').eq('id', authData.user.id).single();
          return { token: authData.session.access_token, user: this.mapData(data) };
+      }
+      if (endpoint === 'auth' && action === 'forgot-password') {
+         const { data, error } = await this.supabase.auth.resetPasswordForEmail(body.email, {
+            redirectTo: 'http://localhost:4200/reset-password' // Note: This should match the production URL eventually
+         });
+         if (error) throw error;
+         return { message: 'Password reset email sent' };
       }
       
       if (endpoint === 'auth' && action === 'signup') {

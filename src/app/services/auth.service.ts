@@ -32,6 +32,10 @@ export class AuthService {
     });
   }
 
+  forgotPassword(email: string) {
+    return this.http.post(`${this.apiUrl}/forgot-password`, { email });
+  }
+
   saveLoginData(response: any): void {
     localStorage.setItem('token', response.token);
     localStorage.setItem('user', JSON.stringify(response.user));

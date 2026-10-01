@@ -13,6 +13,7 @@ export class LoginComponent {
   password = '';
   loading = false;
   errorMessage = '';
+  showPassword = false;
 
   constructor(
     private authService: AuthService,
@@ -56,5 +57,30 @@ export class LoginComponent {
             'Invalid email or password.';
         }
       });
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
+  forgotPassword() {
+    if (!this.email) {
+      this.errorMessage = 'Please enter your email to reset password.';
+      return;
+    }
+
+    this.loading = true;
+    this.errorMessage = '';
+
+    this.authService.forgotPassword(this.email).subscribe({
+      next: () => {
+        this.loading = false;
+        alert('Password reset link has been sent to your email.');
+      },
+      error: (error) => {
+        this.loading = false;
+        this.errorMessage = error.error?.message || 'Error sending password reset link.';
+      }
+    });
   }
 }
