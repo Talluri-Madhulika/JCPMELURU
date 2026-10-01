@@ -77,6 +77,19 @@ export class SupabaseInterceptor implements HttpInterceptor {
         if (error) throw error;
         return this.mapData(data);
       } else {
+        if (table === 'users') {
+           const { data, error } = await this.supabase.from('users').select('*').order('created_at', { ascending: false });
+           if (error) throw error;
+           const users = data.map(d => this.mapData(d));
+           return {
+              users: users,
+              adminCount: users.filter(u => u.role === 'admin').length,
+              maxAdmins: 4,
+              changeableAdmins: 3,
+              permanentAdminEmail: 'tallurimadhulika@gmail.com'
+           };
+        }
+
         const { data, error } = await this.supabase.from(table).select('*').order('created_at', { ascending: false });
         if (error) throw error;
         return data.map(d => this.mapData(d));
