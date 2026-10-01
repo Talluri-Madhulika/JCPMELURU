@@ -16,6 +16,7 @@ import { FavoritesComponent } from './pages/favorites/favorites.component';
 import { LoginComponent } from './pages/login/login.component';
 import { SignupComponent } from './pages/signup/signup.component';
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
 import { DashboardComponent } from './pages/admin/dashboard/dashboard.component';
 import { SettingsComponent } from './pages/settings/settings.component';
 
@@ -45,6 +46,8 @@ const routes: Routes = [
   { path: 'signup', component: SignupComponent },
 
   { path: 'forgot-password', component: ForgotPasswordComponent },
+
+  { path: 'reset-password', component: ResetPasswordComponent },
 
   { 
     path: 'admin', 

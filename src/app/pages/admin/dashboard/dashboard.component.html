@@ -138,6 +138,21 @@
 
     </button>
 
+    <button
+      class="dashboard-card"
+      (click)="selectedSection = 'socialChannels'">
+
+      <div class="dashboard-card-icon">🌐</div>
+
+      <div class="dashboard-card-content">
+        <h3>Social Channels</h3>
+        <p>Manage social media links</p>
+      </div>
+
+      <span class="dashboard-card-arrow">›</span>
+
+    </button>
+
   </div>
 
 
@@ -168,7 +183,13 @@
       *ngIf="showSongForm"
       class="song-form">
 
-      <h2>Add New Song</h2>
+      <h2>
+        {{
+          editingSongId
+            ? 'Edit Song'
+            : 'Add New Song'
+        }}
+      </h2>
 
       <input
         type="text"
@@ -205,9 +226,13 @@
 
         <button
           class="save-btn"
-          (click)="addSong()">
+          (click)="saveSong()">
 
-          Save Song
+          {{
+            editingSongId
+              ? 'Update Song'
+              : 'Save Song'
+          }}
 
         </button>
 
@@ -251,6 +276,14 @@
 
 
         <div class="actions">
+
+          <button
+            class="edit-btn"
+            (click)="editSong(song)">
+
+            Edit
+
+          </button>
 
           <button
             class="delete-btn"
@@ -1210,6 +1243,103 @@
 
         </div>
 
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       SOCIAL CHANNELS
+  ====================================================== -->
+
+  <div
+    *ngIf="selectedSection === 'socialChannels'"
+    class="section">
+
+    <div class="section-header">
+      <h2>Manage Social Channels</h2>
+      <button
+        class="add-btn"
+        (click)="openSocialForm()">
+        + Add Channel
+      </button>
+    </div>
+
+    <!-- FORM -->
+    <div
+      *ngIf="showSocialForm"
+      class="song-form">
+
+      <h2>
+        {{
+          editingSocialId
+            ? 'Edit Channel'
+            : 'Add New Channel'
+        }}
+      </h2>
+
+      <input
+        type="text"
+        placeholder="Platform (e.g. YouTube, Instagram, Facebook)"
+        [(ngModel)]="newSocialChannel.platform">
+
+      <input
+        type="text"
+        placeholder="Channel Name (e.g. JCPM ELURU)"
+        [(ngModel)]="newSocialChannel.name">
+
+      <input
+        type="text"
+        placeholder="Channel Link"
+        [(ngModel)]="newSocialChannel.url">
+
+      <div class="form-actions">
+
+        <button
+          class="cancel-btn"
+          (click)="closeSocialForm()">
+          Cancel
+        </button>
+
+        <button
+          class="save-btn"
+          (click)="saveSocialChannel()">
+          {{
+            editingSocialId
+              ? 'Update Channel'
+              : 'Save Channel'
+          }}
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- LIST -->
+    <div class="songs-list">
+
+      <div
+        class="song-card"
+        *ngFor="let channel of socialChannels">
+
+        <div class="song-info">
+          <h3>{{ channel.name }}</h3>
+          <p>{{ (channel.icon || channel.platform) | uppercase }} - <a [href]="channel.url || channel.link" target="_blank">{{ channel.url || channel.link }}</a></p>
+        </div>
+
+        <div class="actions">
+          <button class="edit-btn" (click)="editSocialChannel(channel)">Edit</button>
+          <button class="delete-btn" (click)="deleteSocialChannel(channel._id || channel.id)">Delete</button>
+        </div>
+
+      </div>
+
+      <div
+        *ngIf="socialChannels.length === 0"
+        class="empty-state">
+        <p>No social channels found.</p>
       </div>
 
     </div>

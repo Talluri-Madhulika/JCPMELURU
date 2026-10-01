@@ -14,11 +14,16 @@ export class SignupComponent {
   password = '';
   loading = false;
   errorMessage = '';
+  showPassword = false;
 
   constructor(
     private authService: AuthService,
     private router: Router
   ) {}
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
 
   signup() {
 

@@ -33,7 +33,7 @@ export class SupabaseInterceptor implements HttpInterceptor {
         endpoint = 'users';
         id = parts[2];
         action = parts[3];
-      } else if (id === 'login' || id === 'signup' || id === 'forgot-password') {
+      } else if (id === 'login' || id === 'signup' || id === 'forgot-password' || id === 'reset-password') {
         action = id;
         id = undefined;
       }
@@ -57,7 +57,7 @@ export class SupabaseInterceptor implements HttpInterceptor {
     if (endpoint === 'push') table = 'push_subscriptions';
 
     if (table === 'auth') {
-       if (endpoint !== 'auth' || (action !== 'login' && action !== 'signup')) {
+       if (endpoint !== 'auth' || (action !== 'login' && action !== 'signup' && action !== 'forgot-password' && action !== 'reset-password')) {
          console.error('ERROR: Interceptor is trying to query public.auth table!', { method, endpoint, id, action, body });
          throw new Error(`Invalid route: ${method} /api/${endpoint}/${id || ''}/${action || ''}`);
        }
@@ -110,10 +110,18 @@ export class SupabaseInterceptor implements HttpInterceptor {
       }
       if (endpoint === 'auth' && action === 'forgot-password') {
          const { data, error } = await this.supabase.auth.resetPasswordForEmail(body.email, {
-            redirectTo: 'http://localhost:4200/reset-password' // Note: This should match the production URL eventually
+            redirectTo: body.redirectTo || 'http://localhost:4200/reset-password'
          });
          if (error) throw error;
          return { message: 'Password reset email sent' };
+      }
+
+      if (endpoint === 'auth' && action === 'reset-password') {
+         const { data, error } = await this.supabase.auth.updateUser({
+            password: body.password
+         });
+         if (error) throw error;
+         return { message: 'Password updated successfully' };
       }
       
       if (endpoint === 'auth' && action === 'signup') {

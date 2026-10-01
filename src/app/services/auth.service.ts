@@ -33,7 +33,14 @@ export class AuthService {
   }
 
   forgotPassword(email: string) {
-    return this.http.post(`${this.apiUrl}/forgot-password`, { email });
+    return this.http.post(`${this.apiUrl}/forgot-password`, { 
+      email, 
+      redirectTo: window.location.origin + '/reset-password' 
+    });
+  }
+
+  resetPassword(password: string) {
+    return this.http.post(`${this.apiUrl}/reset-password`, { password });
   }
 
   saveLoginData(response: any): void {

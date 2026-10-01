@@ -25,6 +25,7 @@ import { ContentDetailComponent } from './pages/content-detail/content-detail.co
 import { SafeUrlPipe } from './pipes/safe-url.pipe';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { SupabaseInterceptor } from './interceptors/supabase.interceptor';
+import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { SupabaseInterceptor } from './interceptors/supabase.interceptor';
     SocialComponent,
     ContentDetailComponent,
     SafeUrlPipe,
-    ProfileComponent
+    ProfileComponent,
+    ResetPasswordComponent
   ],
 
   imports: [

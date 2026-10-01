@@ -18,6 +18,7 @@ export class DashboardComponent implements OnInit {
   songs: any[] = [];
 
   showSongForm = false;
+  editingSongId: string | null = null;
 
   newSong = {
     titleTelugu: '',
@@ -27,7 +28,6 @@ export class DashboardComponent implements OnInit {
     category: 'General',
     youtubeLink: ''
   };
-
 
   // =====================================================
   // MESSAGES
@@ -44,7 +44,6 @@ export class DashboardComponent implements OnInit {
     youtubeLink: '',
     category: 'General'
   };
-
 
   // =====================================================
   // SHORT MESSAGES
@@ -136,6 +135,21 @@ export class DashboardComponent implements OnInit {
 
 
   // =====================================================
+  // SOCIAL CHANNELS
+  // =====================================================
+
+  socialChannels: any[] = [];
+
+  showSocialForm = false;
+  editingSocialId: string | null = null;
+
+  newSocialChannel = {
+    platform: '',
+    name: '',
+    url: ''
+  };
+
+  // =====================================================
   // USERS / ADMIN MANAGEMENT
   // =====================================================
 
@@ -176,6 +190,7 @@ export class DashboardComponent implements OnInit {
     this.getAnnouncements();
     this.getDailyPromises();
     this.getNotifications();
+    this.getSocialChannels();
     this.getUsers();
 
   }
@@ -214,16 +229,7 @@ export class DashboardComponent implements OnInit {
 
 
   openSongForm(): void {
-
-    this.showSongForm = true;
-
-  }
-
-
-  closeSongForm(): void {
-
-    this.showSongForm = false;
-
+    this.editingSongId = null;
     this.newSong = {
       titleTelugu: '',
       titleEnglish: '',
@@ -232,51 +238,71 @@ export class DashboardComponent implements OnInit {
       category: 'General',
       youtubeLink: ''
     };
-
+    this.showSongForm = true;
   }
 
+  closeSongForm(): void {
+    this.showSongForm = false;
+    this.editingSongId = null;
+    this.newSong = {
+      titleTelugu: '',
+      titleEnglish: '',
+      lyricsTelugu: '',
+      lyricsEnglish: '',
+      category: 'General',
+      youtubeLink: ''
+    };
+  }
 
-  addSong(): void {
+  saveSong(): void {
+    if (this.editingSongId) {
+      this.http
+        .put(
+          `http://localhost:5000/api/songs/${this.editingSongId}`,
+          this.newSong
+        )
+        .subscribe({
+          next: () => {
+            alert('Song updated successfully!');
+            this.closeSongForm();
+            this.getSongs();
+          },
+          error: (error) => {
+            console.error('Error updating song:', error);
+            alert('Error updating song:\n' + (error.error?.error || error.message || 'Unknown error'));
+          }
+        });
+    } else {
+      this.http
+        .post(
+          'http://localhost:5000/api/songs',
+          this.newSong
+        )
+        .subscribe({
+          next: () => {
+            alert('Song added successfully!');
+            this.closeSongForm();
+            this.getSongs();
+          },
+          error: (error) => {
+            console.error('Error adding song:', error);
+            alert('Error adding song:\n' + (error.error?.error || error.message || 'Unknown error'));
+          }
+        });
+    }
+  }
 
-    this.http
-      .post(
-        'http://localhost:5000/api/songs',
-        this.newSong
-      )
-      .subscribe({
-
-        next: () => {
-
-          alert(
-            'Song added successfully!'
-          );
-
-          this.closeSongForm();
-
-          this.getSongs();
-
-        },
-
-        error: (error) => {
-
-          console.error(
-            'Error adding song:',
-            error
-          );
-
-          alert(
-            'Error adding song:\n' +
-            (
-              error.error?.error ||
-              error.message ||
-              'Unknown error'
-            )
-          );
-
-        }
-
-      });
-
+  editSong(song: any): void {
+    this.editingSongId = song._id;
+    this.newSong = {
+      titleTelugu: song.titleTelugu || '',
+      titleEnglish: song.titleEnglish || '',
+      lyricsTelugu: song.lyricsTelugu || '',
+      lyricsEnglish: song.lyricsEnglish || '',
+      category: song.category || 'General',
+      youtubeLink: song.youtubeLink || ''
+    };
+    this.showSongForm = true;
   }
 
 
@@ -1985,6 +2011,102 @@ export class DashboardComponent implements OnInit {
       total % gradients.length
     ];
 
+  }
+
+  // =====================================================
+  // SOCIAL CHANNELS CRUD
+  // =====================================================
+
+  getSocialChannels(): void {
+    this.http.get<any[]>('http://localhost:5000/api/social-channels')
+      .subscribe({
+        next: (data) => {
+          this.socialChannels = data || [];
+        },
+        error: (error) => {
+          console.error('Error fetching social channels:', error);
+        }
+      });
+  }
+
+  openSocialForm(): void {
+    this.editingSocialId = null;
+    this.newSocialChannel = {
+      platform: '',
+      name: '',
+      url: ''
+    };
+    this.showSocialForm = true;
+  }
+
+  closeSocialForm(): void {
+    this.showSocialForm = false;
+    this.editingSocialId = null;
+    this.newSocialChannel = {
+      platform: '',
+      name: '',
+      url: ''
+    };
+  }
+
+  saveSocialChannel(): void {
+    const payload = {
+      ...this.newSocialChannel,
+      icon: this.newSocialChannel.platform.toLowerCase()
+    };
+
+    if (this.editingSocialId) {
+      this.http.put(`http://localhost:5000/api/social-channels/${this.editingSocialId}`, payload)
+        .subscribe({
+          next: () => {
+            alert('Social channel updated successfully!');
+            this.closeSocialForm();
+            this.getSocialChannels();
+          },
+          error: (error) => {
+            console.error('Error updating social channel:', error);
+            alert('Error updating social channel: ' + (error.error?.message || error.message));
+          }
+        });
+    } else {
+      this.http.post('http://localhost:5000/api/social-channels', payload)
+        .subscribe({
+          next: () => {
+            alert('Social channel added successfully!');
+            this.closeSocialForm();
+            this.getSocialChannels();
+          },
+          error: (error) => {
+            console.error('Error adding social channel:', error);
+            alert('Error adding social channel: ' + (error.error?.message || error.message));
+          }
+        });
+    }
+  }
+
+  editSocialChannel(channel: any): void {
+    this.editingSocialId = channel._id || channel.id;
+    this.newSocialChannel = {
+      platform: channel.platform || channel.icon || '',
+      name: channel.name || '',
+      url: channel.url || channel.link || ''
+    };
+    this.showSocialForm = true;
+  }
+
+  deleteSocialChannel(id: string): void {
+    if (confirm('Are you sure you want to delete this social channel?')) {
+      this.http.delete(`http://localhost:5000/api/social-channels/${id}`)
+        .subscribe({
+          next: () => {
+            alert('Social channel deleted successfully!');
+            this.getSocialChannels();
+          },
+          error: (error) => {
+            console.error('Error deleting social channel:', error);
+          }
+        });
+    }
   }
 
 }

@@ -28,7 +28,11 @@ export class SongsComponent implements OnInit {
     this.http.get<any[]>('http://localhost:5000/api/songs')
       .subscribe({
         next: (data) => {
-          this.songs = data || [];
+          this.songs = (data || []).sort((a: any, b: any) => {
+            const titleA = a.titleEnglish || a.titleTelugu || '';
+            const titleB = b.titleEnglish || b.titleTelugu || '';
+            return titleA.localeCompare(titleB, undefined, { sensitivity: 'base' });
+          });
           this.filteredSongs = this.songs;
         },
         error: (error) => {
