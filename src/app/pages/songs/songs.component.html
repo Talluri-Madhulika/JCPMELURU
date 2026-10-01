@@ -18,8 +18,13 @@
 
     <div class="browse-az-section">
       <div class="browse-header">
-        <h2>Browse A–Z</h2>
-        <p>Find a song by its starting letter.</p>
+        <div>
+          <h2>Browse {{ currentLanguage === 'EN' ? 'A–Z' : 'అ–ఱ' }}</h2>
+          <p>Find a song by its starting letter.</p>
+        </div>
+        <button class="lang-toggle-btn" (click)="toggleLanguage()">
+          {{ currentLanguage === 'EN' ? 'Switch to Telugu' : 'Switch to English' }}
+        </button>
       </div>
 
       <div class="alphabet-grid">

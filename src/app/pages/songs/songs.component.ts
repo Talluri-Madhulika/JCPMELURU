@@ -13,8 +13,16 @@ export class SongsComponent implements OnInit {
   songs: any[] = [];
   filteredSongs: any[] = [];
   searchText = '';
-  alphabet: string[] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  
+  englishAlphabet: string[] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  teluguAlphabet: string[] = 'అ,ఆ,ఇ,ఈ,ఉ,ఊ,ఋ,ఎ,ఏ,ఐ,ఒ,ఓ,ఔ,అం,అః,క,ఖ,గ,ఘ,చ,ఛ,జ,ఝ,ట,ఠ,డ,ఢ,ణ,త,థ,ద,ధ,న,ప,ఫ,బ,భ,మ,య,ర,ల,వ,శ,ష,స,హ,ళ,క్ష,ఱ'.split(',');
+  
+  currentLanguage: 'EN' | 'TE' = 'EN';
   selectedLetter: string | null = null;
+
+  get alphabet(): string[] {
+    return this.currentLanguage === 'EN' ? this.englishAlphabet : this.teluguAlphabet;
+  }
 
   constructor(
     private http: HttpClient,
@@ -58,8 +66,15 @@ export class SongsComponent implements OnInit {
 
       let matchesLetter = true;
       if (this.selectedLetter) {
-        const firstLetter = (song.titleEnglish || '').charAt(0).toUpperCase();
-        matchesLetter = firstLetter === this.selectedLetter;
+        if (this.currentLanguage === 'EN') {
+          const firstLetter = (song.titleEnglish || '').charAt(0).toUpperCase();
+          matchesLetter = firstLetter === this.selectedLetter;
+        } else {
+          // Telugu character check
+          // In Telugu, a syllable might be multiple JS characters, but for a simple starting letter filter, checking if it starts with the selected letter is more reliable.
+          const titleTe = (song.titleTelugu || '').trim();
+          matchesLetter = titleTe.startsWith(this.selectedLetter);
+        }
       }
 
       return matchesSearch && matchesLetter;
@@ -72,6 +87,12 @@ export class SongsComponent implements OnInit {
     } else {
       this.selectedLetter = letter;
     }
+    this.searchSongs();
+  }
+
+  toggleLanguage(): void {
+    this.currentLanguage = this.currentLanguage === 'EN' ? 'TE' : 'EN';
+    this.selectedLetter = null; // Reset selection on language change
     this.searchSongs();
   }
 
