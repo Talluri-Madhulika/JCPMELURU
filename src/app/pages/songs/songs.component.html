@@ -16,6 +16,23 @@
 
   <main class="content-container">
 
+    <div class="browse-az-section">
+      <div class="browse-header">
+        <h2>Browse A–Z</h2>
+        <p>Find a song by its starting letter.</p>
+      </div>
+
+      <div class="alphabet-grid">
+        <button
+          *ngFor="let letter of alphabet"
+          class="letter-btn"
+          [class.active]="selectedLetter === letter"
+          (click)="filterByLetter(letter)">
+          {{ letter }}
+        </button>
+      </div>
+    </div>
+
     <div class="search-box">
       <input
         type="text"

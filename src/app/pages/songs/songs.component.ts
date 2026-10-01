@@ -13,6 +13,8 @@ export class SongsComponent implements OnInit {
   songs: any[] = [];
   filteredSongs: any[] = [];
   searchText = '';
+  alphabet: string[] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  selectedLetter: string | null = null;
 
   constructor(
     private http: HttpClient,
@@ -46,16 +48,31 @@ export class SongsComponent implements OnInit {
   searchSongs(): void {
     const search = this.searchText.toLowerCase().trim();
 
-    if (!search) {
-      this.filteredSongs = this.songs;
-      return;
-    }
+    this.filteredSongs = this.songs.filter(song => {
+      let matchesSearch = true;
+      if (search) {
+        matchesSearch = (song.titleEnglish || '').toLowerCase().includes(search) ||
+                        (song.titleTelugu || '').toLowerCase().includes(search) ||
+                        (song.category || '').toLowerCase().includes(search);
+      }
 
-    this.filteredSongs = this.songs.filter(song =>
-      (song.titleEnglish || '').toLowerCase().includes(search) ||
-      (song.titleTelugu || '').toLowerCase().includes(search) ||
-      (song.category || '').toLowerCase().includes(search)
-    );
+      let matchesLetter = true;
+      if (this.selectedLetter) {
+        const firstLetter = (song.titleEnglish || '').charAt(0).toUpperCase();
+        matchesLetter = firstLetter === this.selectedLetter;
+      }
+
+      return matchesSearch && matchesLetter;
+    });
+  }
+
+  filterByLetter(letter: string): void {
+    if (this.selectedLetter === letter) {
+      this.selectedLetter = null;
+    } else {
+      this.selectedLetter = letter;
+    }
+    this.searchSongs();
   }
 
   openSong(item: any): void {

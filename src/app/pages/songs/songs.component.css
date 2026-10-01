@@ -166,5 +166,75 @@
   .content-grid {
     grid-template-columns: 1fr;
   }
+}
 
+/* =====================================================
+   BROWSE A-Z SECTION
+===================================================== */
+
+.browse-az-section {
+  background: #fcf9f2;
+  border-radius: 20px;
+  padding: 25px 20px;
+  margin-bottom: 25px;
+  border: 1px solid #f2edd9;
+}
+
+.browse-header {
+  margin-bottom: 20px;
+}
+
+.browse-header h2 {
+  font-family: Georgia, serif;
+  font-size: 26px;
+  color: #3b3228;
+  margin: 0 0 5px;
+  font-weight: 600;
+}
+
+.browse-header p {
+  margin: 0;
+  font-size: 13px;
+  color: #7b756e;
+  font-style: italic;
+}
+
+.alphabet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+  gap: 10px;
+}
+
+.letter-btn {
+  background: #f3efe6;
+  border: none;
+  border-radius: 12px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-family: Georgia, serif;
+  color: #aaa49c;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.letter-btn:hover {
+  background: #e9e4da;
+  color: #555;
+}
+
+.letter-btn.active {
+  background: #ffffff;
+  color: #222;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  border: 1px solid #eee;
+}
+
+@media (max-width: 500px) {
+  .alphabet-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
 }
