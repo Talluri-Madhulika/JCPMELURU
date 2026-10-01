@@ -1,4 +1,5 @@
 {
+  "name": "jcpm-eluru",
   "rewrites": [
     {
       "source": "/(.*)",
